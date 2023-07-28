@@ -1,12 +1,19 @@
 # Installation
 
 python 3.11
+
 Activate environment :
+
 Windows
+
 `C:\python\python311\venv\ARMarket-models\venv\ARMarket-models\Script\activate.bat`
+
 Linux
+
 `source /python/python311/venv/ARMarket-models/bin/activate`
+
 Then
+
 `pip install requirements.txt`
 
 # Models

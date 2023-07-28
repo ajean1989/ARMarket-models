@@ -16,6 +16,11 @@ Then
 
 `pip install requirements.txt`
 
+# Branch
+
++ master (last release models)
++ dev (working models)
+
 # Models
 
 ## Model 1 
@@ -25,3 +30,4 @@ First step of low latency segmentation of all items and price tag.
 ## Model 2 
 
 Items classification with bar code as target.
+

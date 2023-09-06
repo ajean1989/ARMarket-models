@@ -6,7 +6,7 @@ Activate environment :
 
 Windows
 
-`C:\python\python311\venv\ARMarket-models\venv\ARMarket-models\Script\activate.bat`
+`C:\Python\Python311\venv\ARMarket_models\Scripts\activate.bat`
 
 Linux
 

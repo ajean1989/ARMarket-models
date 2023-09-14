@@ -8,5 +8,7 @@ pycocotools
 matplotlib 
 onnxruntime 
 onnx
-
+ultralytics
+opencv-python
+pytube
 # matplotlib et segmen t anything ne s'install pas à partir de ce fichier ?  Faire un pip install individuel 

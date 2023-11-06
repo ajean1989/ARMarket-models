@@ -14,10 +14,14 @@ from pyzbar.pyzbar import decode
 
 class automatic_dataset :
 
-    logging.basicConfig(level=logging.DEBUG, 
-                        filename='app.log', 
-                        filemode='w',
-                        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    log = logging.getLogger("log-auto")
+    log.setLevel(logging.DEBUG)
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+    file_handler = logging.FileHandler("app.log")
+    file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+    log.addHandler(console_handler)   
+    log.addHandler(file_handler)   
 
     def __init__(self,mode,weight,input) :
         self.mode = mode
@@ -45,7 +49,7 @@ class automatic_dataset :
             os.remove(os.path.join(self.path_dataset,img))
         logging.info("mode test activé : Tous les fichiers temp et dataset supprimés")
     
-    def detection(self, vizualize= False, max_frame = -1) :
+    def detection(self, vizualize= False, max_frame = -1, log=log) :
 
         frame_count, detection_count, id_count = 0, 0, 0
 
@@ -108,15 +112,15 @@ class automatic_dataset :
         cap.release()
         cv2.destroyAllWindows()
 
-        logging.info(f"{frame_count} image(s) analysée(s)")
-        logging.info(f"{detection_count} objet(s) détecté(s)")
-        logging.info(f"{id_count} id(s) affecté(s)")
-        logging.info(f"objet(s) différent(s) détecté(s) : {id}")
+        log.info(f"{frame_count} image(s) analysed")
+        log.info(f"{detection_count} detected object(s)")
+        log.info(f"{id_count} id(s) affected")
+        log.info(f"different(s( object(s) detected)) : {id}")
 
 
     ## Faire une detection code sur les images temp, sur bb
 
-    def code(self) :
+    def code(self, log=log) :
         for index, value in self.detected.iterrows():
             # ouvrir image
             image = Image.open(os.path.join(self.path_temp,value["name"]))
@@ -131,7 +135,7 @@ class automatic_dataset :
                 # propagation code à detected
                 # img_crop.show()
                 self.detected["code"].loc[self.detected["id"]==value["id"]] = res_barcode[0].data
-                logging.info(f"code détecté : {res_barcode[0].data}")
+                log.info(f"code detetcted : {res_barcode[0].data}")
 
 
         # Transformer le dict en fichier text d'annotation yolo
@@ -151,7 +155,7 @@ class automatic_dataset :
                 os.replace(os.path.join(self.path_temp,f"{name[:-4]}.txt") , os.path.join(self.path_dataset,f"{name[:-4]}.txt"))
                 os.replace(os.path.join(self.path_temp,f"{name[:-4]}.png") , os.path.join(self.path_dataset,f"{name[:-4]}.png"))
                 file_count += 1
-        logging.info(f"{file_count} fichiers transférés de temp à dataset")
+        log.info(f"{file_count} file(s) transfered from temp to dataset")
 
 
         # Supprimer temp
@@ -159,7 +163,7 @@ class automatic_dataset :
         for img in temp: 
             os.remove(self.path_temp,img)
 
-        return logging.info(f"{len(temp)} fichiers on été dépacés dans dataset.")
+        return log.info(f"temp files deleted.")
     
     
 

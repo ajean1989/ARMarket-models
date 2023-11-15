@@ -12,6 +12,8 @@ from ultralytics import YOLO
 import cv2
 from pyzbar.pyzbar import decode
 
+from backend import Mongo
+
 class automatic_dataset :
 
     log = logging.getLogger("log-auto")
@@ -23,24 +25,28 @@ class automatic_dataset :
     log.addHandler(console_handler)   
     log.addHandler(file_handler)   
 
-    def __init__(self,mode,weight,input) :
-        self.mode = mode
+    def __init__(self,weight,input, test = True) :
         self.weight = weight
         self.input = f"data/{input}"
         self.model = YOLO(f"checkpoints/{self.weight}") 
         self.tracker = "tracker/custom_botsort.yaml"
         self.detected = pd.DataFrame(columns=["name","id","bbxyxy","bbxywhn","code"])
+        # Dossier temp nécéssaire pour faire la detection et suppr img sans détection
         self.path_temp = os.path.join("src","model-1","datasets","bottle_dataset","temp")
         self.path_dataset = os.path.join("src","model-1","datasets","bottle_dataset","dataset")
+        self.test = test
 
-    def __call__(self, vizualize= False, max_frame = -1):
-        if self.mode == 'test':
+    def __call__(self, vizualize= False, max_frame = -1, mongo = False):
+        if self.test :
             self.reset()
         self.detection(vizualize, max_frame)
         self.code()
 
 
     def reset(self) :
+
+        """ Supprime tous les fichiers du dataset en mode test """
+
         temp = os.listdir(self.path_temp)
         for img in temp: 
             os.remove(os.path.join(self.path_temp,img))
@@ -48,8 +54,15 @@ class automatic_dataset :
         for img in dataset: 
             os.remove(os.path.join(self.path_dataset,img))
         logging.info("mode test activé : Tous les fichiers temp et dataset supprimés")
+        bdd = input("Voulez vous supprimer toute la base de données de test ? Y/N :" )
+        if bdd == ("Y" or "y") :
+            mongo = Mongo()
+            mongo.reset_db()
+
     
     def detection(self, vizualize= False, max_frame = -1, log=log) :
+
+        """ Détection d'objets bottle et cup au sein d'un flux video """
 
         frame_count, detection_count, id_count = 0, 0, 0
 
@@ -121,6 +134,9 @@ class automatic_dataset :
     ## Faire une detection code sur les images temp, sur bb
 
     def code(self, log=log) :
+
+        """ Détectection du code barre sur les objets détectés """
+
         for index, value in self.detected.iterrows():
             # ouvrir image
             image = Image.open(os.path.join(self.path_temp,value["name"]))
@@ -146,15 +162,19 @@ class automatic_dataset :
             with open(os.path.join(self.path_temp,f"{name[:-4]}.txt"), "w") as txt:
                 for index, value in data.iterrows():
                     txt.write(str(value["code"])[2:-1] + " " + str(value["bbxywhn"][0]) + " " + str(value["bbxywhn"][1]) + " " + str(value["bbxywhn"][2]) + " " + str(value["bbxywhn"][3]) + "\n")
-
-        # Transférer de temp à dataset
+                    
+        # Transférer de temp à dataset & enregistrer en bdd
         temp = os.listdir(self.path_temp)
         file_count = 0
-        for name in temp:   
+        mongo = Mongo()
+        for name in temp:  
             if name[-3:] == "txt" :
+                mongo.set_img(Image.open(os.path.join(self.path_temp,f"{name[:-4]}.png")), os.path.join(self.path_temp,f"{name[:-4]}.txt"), test = self.test)
                 os.replace(os.path.join(self.path_temp,f"{name[:-4]}.txt") , os.path.join(self.path_dataset,f"{name[:-4]}.txt"))
                 os.replace(os.path.join(self.path_temp,f"{name[:-4]}.png") , os.path.join(self.path_dataset,f"{name[:-4]}.png"))
                 file_count += 1
+
+        log.info(f"{file_count} file(s) transfered to Mongo database in collection dataset{'_test' if self.test else ''} ")
         log.info(f"{file_count} file(s) transfered from temp to dataset")
 
 
@@ -166,7 +186,8 @@ class automatic_dataset :
         return log.info(f"temp files deleted.")
     
     
+    
 
 if __name__ == "__main__":
-    create = automatic_dataset("test", "yolov8x", "multiple_bottles_3.mp4")
+    create = automatic_dataset("yolov8x", "multiple_bottles_3.mp4")
     create()

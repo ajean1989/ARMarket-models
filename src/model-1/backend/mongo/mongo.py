@@ -1,13 +1,12 @@
 from pymongo import MongoClient
 from PIL import Image
-from bson import encode
 import io
 import logging
 import datetime
 
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
 
 from config import *
 

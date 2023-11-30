@@ -9,3 +9,5 @@ services:
     environment:
       - MODULE_NAME=main
       - VARIABLE_NAME=app
+    volumes:
+      - ./app:/api/app

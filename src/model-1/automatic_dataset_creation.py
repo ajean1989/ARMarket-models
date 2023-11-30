@@ -3,6 +3,8 @@ import re
 import os
 import time
 import logging
+import requests
+import json
 
 from random import randint
 import pandas as pd
@@ -12,7 +14,7 @@ from ultralytics import YOLO
 import cv2
 from pyzbar.pyzbar import decode
 
-from backend import Mongo
+from backend.mongo.mongo import Mongo
 
 class automatic_dataset :
 
@@ -169,6 +171,10 @@ class automatic_dataset :
         mongo = Mongo()
         for name in temp:  
             if name[-3:] == "txt" :
+
+                # Appel API 
+                # TO DO 
+
                 mongo.set_img(Image.open(os.path.join(self.path_temp,f"{name[:-4]}.png")), os.path.join(self.path_temp,f"{name[:-4]}.txt"), test = self.test)
                 os.replace(os.path.join(self.path_temp,f"{name[:-4]}.txt") , os.path.join(self.path_dataset,f"{name[:-4]}.txt"))
                 os.replace(os.path.join(self.path_temp,f"{name[:-4]}.png") , os.path.join(self.path_dataset,f"{name[:-4]}.png"))
@@ -186,8 +192,44 @@ class automatic_dataset :
         return log.info(f"temp files deleted.")
     
     
-    
+    def api_off(self, code):
+        """Scrap API off et OSM à partir du code et géoloc pour anvoyer au datawarehouse"""
+        # API OFF
+        result = requests.get(f"https://world.openfoodfacts.org/api/v2/product/{code}.json")
+
+        result = json.loads(result.text)
+
+        utils_keys = ["allergens_tags","brands_tags","abbreviated_product_name_fr","ingredients_tags","nutriments","nutrition_grades_tags","ecoscore_tags","image_url","origins_tags","packaging_materials_tags"]
+
+        drop_keys = []
+
+        for key, value in result["product"].items() : 
+            if key not in utils_keys :
+                drop_keys.append(key)
+        
+        for i in drop_keys:
+            result["product"].pop(i, None)
+
+        data = result["product"]
+        data["url_off"] = f"https://fr.openfoodfacts.org/produit/{code}/"
+
+
+        from  pprint import pprint
+        pprint(data)
+
+        # Appel API 
+        # TO DO 
+        
+        return data
+            
+
+
+
+
+
+
 
 if __name__ == "__main__":
     create = automatic_dataset("yolov8x", "multiple_bottles_3.mp4")
-    create()
+    # create()
+    create.api_off("3307130802557")

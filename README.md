@@ -1,20 +1,7 @@
 # Installation
 
 python 3.11
-
-Activate environment :
-
-Windows
-
-`C:\Python\Python311\venv\ARMarket_models\Scripts\activate.bat`
-
-Linux
-
-`source /python/python311/venv/ARMarket-models/bin/activate`
-
-Then
-
-`pip install requirements.txt`
+requirements.txt
 
 # Branch
 
@@ -23,11 +10,13 @@ Then
 
 # Models
 
-## Model 1 
+## Model 1 (Projet E1)
 
-First step of low latency segmentation of all items and price tag.
+
+Modèle de détection d'objet (actuellement yolov8 préentrainé). Il est utilisé pour la création automatique du dataset.
+A terme, il faudra améliorer le modèle pour qu'il se spécialise dans la reconnaissance des article de magasin. 
 
 ## Model 2 
 
-Items classification with bar code as target.
+Modèle qui servira à associé une image à un code barre. 
 

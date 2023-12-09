@@ -37,6 +37,7 @@ class automatic_dataset :
         self.path_temp = os.path.join("src","model-1","datasets","bottle_dataset","temp")
         self.path_dataset = os.path.join("src","model-1","datasets","bottle_dataset","dataset")
         self.test = test
+        self.vps_adresse = "5.196.7.246"
 
     def __call__(self, vizualize= False, max_frame = -1, mongo = False):
         if self.test :
@@ -199,7 +200,7 @@ class automatic_dataset :
 
         result = json.loads(result.text)
 
-        utils_keys = ["allergens_tags","brands_tags","abbreviated_product_name_fr","ingredients_tags","nutriments","nutrition_grades_tags","ecoscore_tags","image_url","origins_tags","packaging_materials_tags"]
+        utils_keys = ["_id", "allergens_tags","brands_tags","abbreviated_product_name_fr","ingredients_tags","nutriments","nutrition_grades_tags","ecoscore_tags","image_url","origins_tags","packaging_materials_tags"]
 
         drop_keys = []
 
@@ -216,14 +217,18 @@ class automatic_dataset :
 
         from  pprint import pprint
         pprint(data)
-
-        # Appel API 
-        # TO DO 
         
         return data
             
 
 
+    def post_item(self, code) :
+        """Post l'article détecté sur MariaDB."""
+        data_item = self.api_off(code)
+
+        r = requests.post('5.196.7.246', data=data_item)
+
+        return r 
 
 
 

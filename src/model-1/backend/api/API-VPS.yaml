@@ -1,0 +1,299 @@
+openapi: 3.0.3
+info:
+  title: API ARMarket - OpenAPI 3.0
+  description: |-
+    API ARMarket for VPS - Link with dataset and datawarehouse - E1 Project.
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: ad.jacquenet@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: 5.196.7.246
+tags:
+  - name: dataset
+    description: Interact with dataset.
+  - name: datawarehouse
+    description: Interact with data warehouse.
+    
+paths:
+  /dataset/{id}:
+    get:
+      tags:
+        - dataset
+      summary: Retrieve dataset
+      description: Retrieve dataset in zip format. 
+      operationId: getDataset
+      parameters:
+        - name: id
+          in: path
+          description: dataset's id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid id value
+      security:
+        - api_key: []
+
+    delete:
+      tags:
+        - dataset
+      summary: Delete a dataset
+      description: delete a dataset
+      operationId: deleteDataset
+      parameters:
+        - name: id
+          in: path
+          description: Dataset id to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Dataset deleted
+        '400':
+          description: Invalid dataset id value
+      security:
+        - api_key: []
+        
+  /dataset/frame:
+    post:
+      tags:
+        - dataset
+      summary: Add a new image with metadata in dataset
+      description: Add a new image with metadata in dataset
+      operationId: addFrame
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                data:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Successful operation
+        '405':
+          description: Invalid input
+      security:
+        - api_key: []
+        
+  /dataset/frame/{id}:   
+    delete:
+      tags:
+        - dataset
+      summary: Delete an image
+      description: Delete a mongo document
+      operationId: deleteFrame
+      parameters:
+        - name: id
+          in: path
+          description: document id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+            description: Successful operation
+        '400':
+          description: Invalid frame id value
+      security:
+        - api_key: []
+
+  /datawarehouse/item:
+    post:
+      tags:
+        - datawarehouse
+      summary: Record item in datawarehouse
+      description: Record item in datawarehouse. Called by automatic dataset.
+      operationId: recordItem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  item:
+                    type: object
+                    properties:
+                      brand : 
+                        type: string
+                      name : 
+                        type: string
+                      ingredient : 
+                        type: string
+                      allergen : 
+                        type: string
+                      nutriment : 
+                        type: string
+                      nutriscore : 
+                        type: string
+                      ecoscore : 
+                        type: string
+                      packaging : 
+                        type: string
+                      image : 
+                        type: string
+                      url_openfoodfact : 
+                        type: string
+      responses:
+        '200':
+          description: successful operation
+          
+        '405':
+          description: Invalid input
+  /datawarehouse/user:
+    post:
+      tags:
+        - datawarehouse
+      summary: Record user in datawarehouse
+      description: Record user in datawarehouse. Called by app.
+      operationId: recordUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  item:
+                    type: object
+                    properties:
+                      id : 
+                          type: string
+                      name : 
+                        type: string
+                      age : 
+                        type: string
+                      gender : 
+                        type: string
+      responses:
+        '200':
+          description: successful operation
+          
+        '405':
+          description: Invalid input
+  /datawarehouse/scan:
+    post:
+      tags:
+        - datawarehouse
+      summary: Record scan in datawarehouse
+      description: Record scan in datawarehouse. Called by app.
+      operationId: recordScan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  place:
+                    type: object
+                    properties :
+                      name :
+                        type : string
+                      adresse :
+                        type: string
+                      postcode : 
+                        type : number
+                  item:
+                    type: object
+                    properties:
+                      code : 
+                        type: number
+                  user:
+                    type: object
+                    properties:
+                      idUser :
+                        type : number
+                  time:
+                    type: object
+                    properties:
+                      date : 
+                        type: string
+                      year : 
+                        type: number
+                      month : 
+                        type: number
+                      day : 
+                        type: number
+                      hour : 
+                        type: number
+                      minute : 
+                        type: number
+      responses:
+        '200':
+          description: successful operation
+          
+        '405':
+          description: Invalid input
+          
+  /datawarehouse:
+    delete:
+      tags:
+        - datawarehouse
+      summary: SQL query in data warehouse
+      description: Returns json of query
+      operationId: deleteData
+      parameters:
+        - name: idUser
+          in: query
+          description: User id
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: idItem
+          in: query
+          description: Item id
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: idPlace
+          in: query
+          description: Place id
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid frame id value
+      security:
+        - api_key: []
+
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header

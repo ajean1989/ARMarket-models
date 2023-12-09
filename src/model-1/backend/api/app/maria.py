@@ -33,17 +33,23 @@ class Maria :
 
 
 
-    def create_user(self, id_code, brand,name,ingredient,allergen,nutriment,nutriscore,ecoscore,packaging,image,url_openfoodfact):
+    def create_user(self, username, age, gender):
         with self.engine.connect() as connection:
-            query = text("INSERT INTO items (id_code, brand,name,ingredient,allergen,nutriment,nutriscore,ecoscore,packaging,image,url_openfoodfact) VALUES (:id_code, :brand, :name, :ingredient, :allergen, :nutriment, :nutriscore, :ecoscore, :packaging, :image, :url_openfoodfact)")
-            connection.execute(query, id_code=id_code, brand=brand,name=name,ingredient=ingredient,allergen=allergen,nutriment=nutriment,nutriscore=nutriscore,ecoscore=ecoscore,packaging=packaging,image=image,url_openfoodfact=url_openfoodfact)
+            query = text("INSERT INTO user (username,age,gender)")
+            connection.execute(query, username=username, age=age,gender=gender)
 
-    def update_user(self, item_id, new_name, new_description):
+    def update_user(self, username, age, gender):
         with self.engine.connect() as connection:
             query = text("UPDATE items SET name=:new_name, description=:new_description WHERE id=:item_id")
             connection.execute(query, new_name=new_name, new_description=new_description, item_id=item_id)
 
-    def delete_user(self, item_id):
+    def delete_user(self, user_id):
         with self.engine.connect() as connection:
-            query = text("DELETE FROM items WHERE id=:item_id")
-            connection.execute(query, item_id=item_id)
+            query = text("DELETE FROM items WHERE id=:user_id")
+            connection.execute(query, user_id=user_id)
+
+
+    def create_scan(self, user_id, item_id):
+            with self.engine.connect() as connection:
+                query = text("INSERT INTO scan (username,age,gender)")
+                connection.execute(query, username=username, age=age,gender=gender)

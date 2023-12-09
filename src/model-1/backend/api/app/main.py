@@ -59,20 +59,30 @@ def delete_frame(id: int):
 
 
 @app.post("/datawarehouse/item")
-def record_scan(scan_data: dict):
+def record_scan(item: dict):
     
-    name = scan_data["abbreviated_product_name_fr"]
-    # To Continue
-    mr.create_item(name=name)
+    id_code = item["code"]
+    name = item["abbreviated_product_name_fr"]
+    brand = item["brand"]
+    ingredient = item["ingredient"]
+    allergen = item["allergen"]
+    nutriment = item["nutriment"]
+    nutriscore = item["nutriscore"]
+    ecoscore = item["ecoscore"]
+    packaging = item["packaging"]
+    image = item["image"]
+    url_openfoodfact = item["url_off"]
+    mr.create_item(id_code=id_code, name=name, brand=brand, ingredient=ingredient, allergen=allergen, nutriment=nutriment, nutriscore=nutriscore, ecoscore=ecoscore , packaging=packaging, image=image, url_openfoodfact=url_openfoodfact)
 
     return JSONResponse(content={"message": "Frame ajoutée avec succès"}, status_code=200)
 
 @app.post("/datawarehouse/user")
-def record_scan(scan_data: dict):
+def record_user(user: dict):
     
-    name = scan_data["abbreviated_product_name_fr"]
-    # To Continue
-    mr.create_item(name=name)
+    username = user["username"]
+    age = user["age"]
+    gender = user["age"]
+    mr.create_user(username=username, age=age, gender=gender)
 
     return JSONResponse(content={"message": "Frame ajoutée avec succès"}, status_code=200)
 

@@ -18,5 +18,5 @@ A terme, il faudra améliorer le modèle pour qu'il se spécialise dans la recon
 
 ## Modele 2 
 
-Modèle qui servira à associé une image à un code barre. 
+Modèle qui servira à associer une image à un code barre. 
 

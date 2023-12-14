@@ -1,6 +1,10 @@
 
-import re
 import os
+import sys
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+import re
 import time
 import logging
 import requests
@@ -14,7 +18,8 @@ from ultralytics import YOLO
 import cv2
 from pyzbar.pyzbar import decode
 
-from backend.mongo.mongo import Mongo
+from model1.backend.mongo.mongo import Mongo
+from config import *
 
 class automatic_dataset :
 
@@ -34,10 +39,10 @@ class automatic_dataset :
         self.tracker = "tracker/custom_botsort.yaml"
         self.detected = pd.DataFrame(columns=["name","id","bbxyxy","bbxywhn","code"])
         # Dossier temp nécéssaire pour faire la detection et suppr img sans détection
-        self.path_temp = os.path.join("src","model-1","datasets","bottle_dataset","temp")
-        self.path_dataset = os.path.join("src","model-1","datasets","bottle_dataset","dataset")
+        self.path_temp = os.path.join("src","model1","datasets","bottle_dataset","temp")
+        self.path_dataset = os.path.join("src","model1","datasets","bottle_dataset","dataset")
         self.test = test
-        self.vps_adresse = "5.196.7.246"
+        self.vps_adresse = adresse_mongo
 
     def __call__(self, vizualize= False, max_frame = -1, mongo = False):
         if self.test :
@@ -56,9 +61,9 @@ class automatic_dataset :
         dataset = os.listdir(self.path_dataset)
         for img in dataset: 
             os.remove(os.path.join(self.path_dataset,img))
-        logging.info("mode test activé : Tous les fichiers temp et dataset supprimés")
+        logging.info("mode test activé : Tous les fichiers de temp/ et dataset/ supprimés")
         bdd = input("Voulez vous supprimer toute la base de données de test ? Y/N :" )
-        if bdd == ("Y" or "y") :
+        if bdd == "Y" or bdd == "y" :
             mongo = Mongo()
             mongo.reset_db()
 
@@ -226,7 +231,7 @@ class automatic_dataset :
         """Post l'article détecté sur MariaDB."""
         data_item = self.api_off(code)
 
-        r = requests.post('5.196.7.246', data=data_item)
+        r = requests.post(self.vps_adresse, data=data_item)
 
         return r 
 

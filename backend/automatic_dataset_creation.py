@@ -4,7 +4,6 @@ import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import re
 import time
 import logging
 import requests
@@ -18,8 +17,6 @@ from ultralytics import YOLO
 import cv2
 from pyzbar.pyzbar import decode
 
-from model1.backend.mongo.mongo import Mongo
-from config import *
 
 class automatic_dataset :
 
@@ -64,6 +61,7 @@ class automatic_dataset :
         logging.info("mode test activé : Tous les fichiers de temp/ et dataset/ supprimés")
         bdd = input("Voulez vous supprimer toute la base de données de test ? Y/N :" )
         if bdd == "Y" or bdd == "y" :
+            # API reset db
             mongo = Mongo()
             mongo.reset_db()
 

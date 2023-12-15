@@ -4,3 +4,6 @@ src/model-1/datasets/*
 config.py
 *.pyc
 app.log
+data/custom_model1/*
+data/custom_model1_test/*
+.vscode/*

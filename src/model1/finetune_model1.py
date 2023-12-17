@@ -18,7 +18,7 @@ model = YOLO('../../checkpoints/yolov8n.pt')
 hyperparameters = {"epochs" : 100,
                    "imgsz" : 640}
 
-results = model.train(data='src/model1/dataset_custom_test.yaml', **hyperparameters)
+results = model.train(data='src/model1/dataset_custom_object.yaml', **hyperparameters)
 
 
 # Set our tracking server uri for logging

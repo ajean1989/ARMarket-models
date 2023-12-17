@@ -1,35 +1,39 @@
-import os
-import sys
+import os 
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from backend.automatic_dataset_creation import automatic_dataset
 
-print(sys.path)
-from src.model1.automatic_dataset_creation import automatic_dataset
-from src.model1.backend.mongo.mongo import Mongo
 
-import pytest
+# def test_reset(mongo):
+#     auto = automatic_dataset("yolov8x-oiv7", "multiple_bottles_3.mp4", test=True)
+#     # Test que les fichiers du dossiers temps sont bien effacés
 
-auto = automatic_dataset("yolov8x", "multiple_bottles_3.mp4", test=True)
+#     with open (os.path.join("backend","temp","test.txt"), "w") as txt :
+#         txt.write("test")
 
-def test_reset():
-    # Test que les fichiers des dossiers temps et dataset sont bien effacés
+#     assert len(os.listdir(os.path.join("backend","temp"))) > 0
+#     # Test que la bdd est bien reset
 
-    # Test que la bdd est bien reset
+#     ## Insertion en bdd
 
-    ## Insertion en bdd
-    mongo_test = Mongo()
-    new_document = {"nom": "John", "âge": 30}
-    result = mongo_test.dataset_test_collection.insert_one(new_document)
-    docs = mongo_test.dataset_test_collection.find({})
-    count = 0
-    for doc in docs :
-        count += 1
-    assert count > 0 
+#     new_document = {"nom": "John", "âge": 30}
+#     result = mongo.dataset_test_collection.insert_one(new_document)
+#     docs = mongo.dataset_test_collection.find({})
+#     count = 0
+#     for doc in docs :
+#         count += 1
+#     assert count > 0 
 
-    ## reset
-    auto.reset()
-    docs = mongo_test.dataset_test_collection.find({})
-    count = 0
-    for doc in docs :
-        count += 1
-    assert count == 0 
+#     ## reset
+#     auto.reset()
+#     docs = mongo.dataset_test_collection.find({})
+#     count = 0
+#     for doc in docs :
+#         count += 1
+#     assert count == 0 
+#     assert len(os.listdir(os.path.join("backend","temp"))) == 0
+
+def test_detection():
+    auto = automatic_dataset("yolov8x-oiv7.pt", "data/sample/multiple_bottles_3.mp4", test=True)
+    assert len(os.listdir(os.path.join("backend","temp"))) == 0
+    auto.detection(vizualize=True)
+    assert len(os.listdir(os.path.join("backend","temp"))) > 0

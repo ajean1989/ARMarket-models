@@ -1,6 +1,6 @@
 import argparse
 
-from mariadb import model
+from backend.mariadb import model
 
 
 # Parser
@@ -13,4 +13,4 @@ args = parser.parse_args()
 
 if __name__ == "__main__":
     if args.maria : 
-        
+        pass

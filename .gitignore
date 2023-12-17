@@ -1,6 +1,5 @@
 checkpoints/*
 sku110k/*
-src/model-1/datasets/*
 config.py
 *.pyc
 app.log

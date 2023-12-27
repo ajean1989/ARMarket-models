@@ -1,0 +1,5 @@
+{
+    "_comment" : "Table de correspondance entre les datasets et leur id [int]",
+    "Object" : "0 : Dataset d'entraînement de détection d'articles",
+    "item" : "1 : Dataset pour le détection des articles tout venant"
+}

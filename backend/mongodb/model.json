@@ -1,0 +1,25 @@
+{
+    "_comment" : "Modèle de structure des données JSON composant la base dataset",
+    "date" : "[date JJMMYYYY] Date de l'insertion du document",
+    "id" : "[int] Id de l'image / collection",
+    "img" : "[bin] Image",
+    "name" : "[str] Nom de l'image format [from(dataset)_rand(10).jpg]",
+    "size" : "[int] Taille de l'image en Mo",
+    "pre-treatment" : "[bool] Si l'image a été pré-traitée",
+    "data_augmentation" : "[bool] Si l'image est issue d'une data augmentation",
+    "dataset" : "[list] Liste des datasets auquel l'image appartient",
+    "training_data" :
+        [
+            {
+                "label" : "[str] Label associé à l'image",
+                "label_int" : "[int] Label associé à l'image sous forme d'integer unique avec table de correspondance dans label.json",
+                "bounding box" : "[list] Liste des bounding box au format xywhn"
+            },
+            {
+                "label" : "[str] Label associé à l'image",
+                "label_int" : "[int] Label associé à l'image sous forme d'integer unique avec table de correspondance dans label.json",
+                "bounding box" : "[list] Liste des bounding box au format xywhn"
+            }
+        ]
+    
+}

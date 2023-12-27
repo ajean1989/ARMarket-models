@@ -1,2 +1,7 @@
 fastapi
 uvicorn
+pymongo
+sqlalchemy
+mariadb
+Pillow
+python-multipart

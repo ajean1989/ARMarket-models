@@ -1,13 +1,12 @@
 version: '3.8'
 
 services:
-  fastapi-app:
-    image: fastapi
-    container_name: fastapi-container
-    ports:
-      - "8000:80"
-    environment:
-      - MODULE_NAME=main
-      - VARIABLE_NAME=app
-    volumes:
+  my_service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports :
+      - 8000:80 
+    volumes : 
       - ./app:/api/app
+    # Ajoutez d'autres configurations de service si nécessaire

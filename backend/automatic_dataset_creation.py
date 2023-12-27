@@ -1,8 +1,8 @@
 
 import os
-# import sys
+import sys
 
-# sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import time
 import logging
@@ -50,9 +50,12 @@ class automatic_dataset :
             self.classes = [199,171,62,57,535]
         else : 
             self.classes = [39,41]
+        if re.search("train", weight):
+            self.classes = [0]
+      
 
     def __call__(self, vizualize= False, max_frame = -1, mongo = False):
-        self.reset()
+        # self.reset()
         self.detection(vizualize, max_frame)
         self.code()
 
@@ -255,6 +258,6 @@ class automatic_dataset :
 
 
 if __name__ == "__main__":
-    create = automatic_dataset("yolov8x", "multiple_bottles_3.mp4")
-    # create()
-    create.api_off("3307130802557")
+    create = automatic_dataset("yolov8n_custom201223_train9.pt", "data/sample/video_test_2.mp4")
+    create()
+    # create.api_off("3307130802557")

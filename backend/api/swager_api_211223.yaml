@@ -27,7 +27,7 @@ paths:
       tags:
         - dataset
       summary: Retrieve dataset
-      description: Retrieve dataset in zip format. 
+      description: Retrieve dataset in zip format [ARMdataset[id]_date.zip]. 
       operationId: getDataset
       parameters:
         - name: id
@@ -42,28 +42,6 @@ paths:
           description: successful operation
         '400':
           description: Invalid id value
-      security:
-        - api_key: []
-
-    delete:
-      tags:
-        - dataset
-      summary: Delete a dataset
-      description: delete a dataset
-      operationId: deleteDataset
-      parameters:
-        - name: id
-          in: path
-          description: Dataset id to delete
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Dataset deleted
-        '400':
-          description: Invalid dataset id value
       security:
         - api_key: []
         
@@ -96,7 +74,28 @@ paths:
       security:
         - api_key: []
         
-  /dataset/frame/{id}:   
+  /dataset/frame/{id}:  
+    put:
+      tags:
+        - dataset
+      summary: Modify an image
+      description: Modify a mongo document
+      operationId: modifyFrame
+      parameters:
+        - name: id
+          in: path
+          description: document id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+            description: Successful operation
+        '400':
+          description: Invalid frame id value
+      security:
+        - api_key: []
     delete:
       tags:
         - dataset
@@ -118,13 +117,85 @@ paths:
           description: Invalid frame id value
       security:
         - api_key: []
+  
+  /datawarehouse:
+    get:
+      tags:
+        - datawarehouse
+      summary: SQL query in data warehouse
+      description: Returns json of query
+      operationId: getData
+      parameters:
+        - name: idUser
+          in: query
+          description: User id
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: idItem
+          in: query
+          description: Item id
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: idPlace
+          in: query
+          description: Place id
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid frame id value
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - datawarehouse
+      summary: SQL query in data warehouse
+      description: Returns json of query
+      operationId: deleteData
+      parameters:
+        - name: idUser
+          in: query
+          description: User id
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: idItem
+          in: query
+          description: Item id
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: idPlace
+          in: query
+          description: Place id
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid frame id value
+      security:
+        - api_key: []
 
   /datawarehouse/item:
     post:
       tags:
         - datawarehouse
-      summary: Record item in datawarehouse
-      description: Record item in datawarehouse. Called by automatic dataset.
+      summary: Record scan in datawarehouse
+      description: Record item in datawarehouse
       operationId: recordItem
       requestBody:
         required: true
@@ -168,8 +239,8 @@ paths:
     post:
       tags:
         - datawarehouse
-      summary: Record user in datawarehouse
-      description: Record user in datawarehouse. Called by app.
+      summary: Record scan in datawarehouse
+      description: Record user in datawarehouse
       operationId: recordUser
       requestBody:
         required: true
@@ -202,7 +273,7 @@ paths:
       tags:
         - datawarehouse
       summary: Record scan in datawarehouse
-      description: Record scan in datawarehouse. Called by app.
+      description: Record scan in datawarehouse
       operationId: recordScan
       requestBody:
         required: true
@@ -254,42 +325,7 @@ paths:
         '405':
           description: Invalid input
           
-  /datawarehouse:
-    delete:
-      tags:
-        - datawarehouse
-      summary: SQL query in data warehouse
-      description: Returns json of query
-      operationId: deleteData
-      parameters:
-        - name: idUser
-          in: query
-          description: User id
-          required: false
-          schema:
-            type: integer
-            format: int64
-        - name: idItem
-          in: query
-          description: Item id
-          required: false
-          schema:
-            type: integer
-            format: int64
-        - name: idPlace
-          in: query
-          description: Place id
-          required: false
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: successful operation
-        '400':
-          description: Invalid frame id value
-      security:
-        - api_key: []
+  
 
 components:
   securitySchemes:

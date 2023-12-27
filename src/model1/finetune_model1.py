@@ -1,24 +1,22 @@
 import sys
 import os
 
-import mlflow
 
-
-# Création du dataset
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-print(sys.path)
-
-from ultralytics import YOLO
+from ultralytics import YOLO, settings
 
 # mlflow.autolog() 
 
 # Load a COCO-pretrained YOLOv8n model
 model = YOLO('../../checkpoints/yolov8n.pt')
 
-hyperparameters = {"epochs" : 100,
+hyperparameters = {"epochs" : 50,
+                   "batch" : 2,
                    "imgsz" : 640}
 
-results = model.train(data='src/model1/dataset_custom_object.yaml', **hyperparameters)
+print(settings)
+if __name__ == "__main__": 
+    results = model.train(data='src/model1/dataset_custom_object.yaml', **hyperparameters)
+    success = model.export()
 
 
 # Set our tracking server uri for logging

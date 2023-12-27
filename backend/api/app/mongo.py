@@ -7,11 +7,12 @@ import random
 import re
 import shutil
 
-import sys
-import os
-sys.path.append((os.path.dirname(os.path.abspath(__file__))))
+# import sys
+# import os
+# sys.path.append((os.path.dirname(os.path.abspath(__file__))))
+# print(sys.path)
 
-from config import *
+from app.config import *
 
 
 class Mongo :

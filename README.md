@@ -30,9 +30,9 @@ On peut ajouter d'autre dataset dans gitignore pour l'entrainement des modèles.
 
 ### Modele 1 (Projet E1)
 
-
-Modèle de détection d'objet (actuellement yolov8 pré-entrainé). Il est utilisé pour la création automatique du dataset.
-A terme, il faudra améliorer le modèle pour qu'il se spécialise dans la reconnaissance des articles de magasin. 
+Meilleur modèle à ce jour : yolov8n_custom201223_train9.pt
+yolov8 fine-tuné avec un dataset custom de openimagev7 et SKU110k
+Modèle de détection d'objet utilisé pour la création automatique du dataset.
 
 ### Modele 2 
 
@@ -45,10 +45,19 @@ Script d'anotation automatique.
 ### API
 
 Mise en place de l'API sur un VPS.
+Cette API sert à communiquer avec les bases de données MongoDB pour la gestion des datasets et MariaDB pour analyse de données.
+L'API est dans un conteneur Docker. Placer les fichers backend/api/ sur un hôte et lancer "docker compose up"/"docker-compose up --force-recreate --build".
+Penser à configurer uvicorn pour la production dans le DockerFile. 
+
+Pour le dev, lancer le build + run du container et accéder au container via l'extension Dev-container : "Attach to a running container". Le volume créé dans docker-compose persiste les données entre le container et l'hôte de développement. 
 
 ### MariaDB
 
 Initialisation du modèle de données de la base MariaDB. 
+
+### Mongodb 
+
+Informations relatives aux à cette bases de données et aux datasets.  
 
 ## Trackers
 

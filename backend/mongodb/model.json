@@ -3,7 +3,7 @@
     "date" : "[date JJMMYYYY] Date de l'insertion du document",
     "id" : "[int] Id de l'image / collection",
     "img" : "[bin] Image",
-    "name" : "[str] Nom de l'image format [from(dataset)_rand(10).jpg]",
+    "name" : "[str] Nom de l'image format [from(dataset d'extraction)_rand(10).jpg]",
     "size" : "[int] Taille de l'image en Mo",
     "pre-treatment" : "[bool] Si l'image a été pré-traitée",
     "data_augmentation" : "[bool] Si l'image est issue d'une data augmentation",

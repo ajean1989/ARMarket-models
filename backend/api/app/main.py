@@ -46,7 +46,7 @@ def add_frame(image: UploadFile = File(...), txt: UploadFile = File(...)):
     return JSONResponse(content={"message": "Frame ajoutée avec succès"}, status_code=200)
 
 
-@app.put("/dataset/frame")
+@app.put("/dataset/frame/{id}")
 def add_frame(image: UploadFile = File(...), txt: UploadFile = File(...)):
     if not image.filename.lower().endswith((".png", ".jpg", ".jpeg")):
         return JSONResponse(content={"error": "L'image doit avoir une extension .png, .jpg ou .jpeg"}, status_code=405)

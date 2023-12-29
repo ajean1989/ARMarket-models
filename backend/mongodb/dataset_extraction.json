@@ -1,0 +1,6 @@
+{
+    "_comment" : "Table de correspondance entre les datasets d'extraction à partir duquel est créé mon dataset et leur nom",
+    "ARM" : "Mes propres images",
+    "OIV7" : "Google openimage V7",
+    "SKU110K" : "SKU110K dataset"
+}

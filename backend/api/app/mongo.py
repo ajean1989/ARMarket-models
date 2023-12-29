@@ -37,8 +37,10 @@ class Mongo :
         """ Convertion d'une image PIL en BYTES """
         imgbyte = io.BytesIO()
         img.save(imgbyte, format="png")
+        image_file_size = imgbyte.tell()
         imgbyte = imgbyte.getvalue()
-        return imgbyte
+
+        return [imgbyte, image_file_size]
     
 
     
@@ -61,9 +63,10 @@ class Mongo :
         self.dataset_collection.delete_one(query)
         input("vérifier document effacé puis press enter")
         return "test terminé"
+    
 
+    
     # API
-
 
     def get_dataset_id(self, id) : 
         """get /dataset/{id}"""
@@ -96,35 +99,66 @@ class Mongo :
         self.log.info(f"API : delete dataset, dataset_id : {id}")
        
 
-    def set_img(self,img, txt_path, dataset_id = 0, data_augmentation = False, test = True):
+    def set_img(self,img : bytes, annotation : list, dataset_id : list, dataset_extraction : str, pretreatment : bool, data_augmentation: bool, test : bool):
         """ 
         post /dataset/frame
         Enregistre les images qui on eu une détection et les métadonnées :
-        Date de la mise en base
-        Code + BB
-        Nom du dataset : 0 = all
-        pré-traitement y a-t-il eu 
-        Data augmentation y a-t-il eu
+        "date" : "[date JJMMYYYY] Date de l'insertion du document",
+        "id" : "[int] Id de l'image / collection",
+        "img" : "[bin] Image",
+        "name" : "[str] Nom de l'image format [from(dataset)_rand(10).jpg]",
+        "size" : "[int] Taille de l'image en Mo",
+        "pre-treatment" : "[bool] Si l'image a été pré-traitée",
+        "data_augmentation" : "[bool] Si l'image est issue d'une data augmentation",
+        "dataset" : "[list] Liste des datasets auquel l'image appartient",
+        "training_data" :
+            [
+                {
+                    "label" : "[str] Label associé à l'image",
+                    "label_int" : "[int] Label associé à l'image sous forme d'integer unique avec table de correspondance dans label.json",
+                    "bounding box" : "[list] Liste des bounding box au format xywhn"
+                },
+                {
+                    "label" : "[str] Label associé à l'image",
+                    "label_int" : "[int] Label associé à l'image sous forme d'integer unique avec table de correspondance dans label.json",
+                    "bounding box" : "[list] Liste des bounding box au format xywhn"
+                }
+            ]
         """
-
-        imgbyte = self.img_to_byte(img)
 
         # Création du document
         new_document = {}
 
-        new_document["img"] = imgbyte
-        new_document["date"] = datetime.datetime.today()
+        # "date" : "[date YYYYMMDD] Date de l'insertion du document"
+        new_document["date"] = datetime.datetime.today().strftime('%Y-%m-%d')
+
+        # "id" : "[int] Id de l'image / collection"
+        # Créé automatiquement "_id"
+
+        # "img" : "[bin] Image"
+        imgbyte = self.img_to_byte(img)
+        new_document["img"] = imgbyte[0]
+        # "size" : "[int] Taille de l'image en Mo"
+        new_document["size"] = imgbyte[1]
+
+        # "name" : "[str] Nom de l'image format [from(dataset d'extraction)_rand(10).jpg]"
+        new_document["name"] = f"{dataset_extraction}_{random.random()*(10**10)}"
 
 
-        with open (f"{txt_path}", "r") as txt :
-            rows = txt.readlines()
-            for index, row in enumerate(rows) :
-                words = row.split()
-                new_document[f"label_{index}"] = {"code" : words[0], "bb" : [words[1], words[2], words[3], words[4]]}
-        new_document["dataset_id"] = [dataset_id]
-        new_document["pretreatment"] = self.pretreatment
+        # "pre-treatment" : "[bool] Si l'image a été pré-traitée",
+        new_document["pre_treatment"] = pretreatment
+
+        # "data_augmentation" : "[bool] Si l'image est issue d'une data augmentation",
         new_document["data_augmentation"] = data_augmentation
 
+        # "dataset" : "[list] Liste des datasets auquel l'image appartient"
+        new_document["dataset"] = dataset_id
+
+        # "training_data" : list de dict contenant label, label int, bb de chaque détection de l'image
+        # input est un une list contenant un json pré formaté avant l'envoie à l'API pour correspondre au format attendu par yolo. 
+        new_document["training_data"] = annotation
+
+        
         # Insertion en base
         if test :
             self.dataset_test_collection.insert_one(new_document)

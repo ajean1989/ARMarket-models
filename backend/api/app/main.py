@@ -1,6 +1,7 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File, Query
+from fastapi import FastAPI, HTTPException, UploadFile, File, Query, Form
 from fastapi.responses import JSONResponse, FileResponse
-from typing import List, Optional
+from pydantic import BaseModel
+from typing import List, Optional, Annotated
 from app import mongo
 from app import maria
 
@@ -32,14 +33,21 @@ def get_dataset(id: int):
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Fichier ZIP non trouvé")
 
-@app.post("/dataset/frame")
-def add_frame(image: UploadFile = File(...), txt: UploadFile = File(...)):
+class Detection(BaseModel):
+    label: str
+    label_int: int
+    bounding_box: list
+
+class training_data(BaseModel):
+    objets: List[Detection]
+
+@app.post("/dataset/frame/")
+def add_frame(image: UploadFile, txt: Annotated[bytes, File()]):
     if not image.filename.lower().endswith((".png", ".jpg", ".jpeg")):
         return JSONResponse(content={"error": "L'image doit avoir une extension .png, .jpg ou .jpeg"}, status_code=405)
-
-    if not txt.filename.lower().endswith(".txt"):
-        return JSONResponse(content={"error": "Le fichier texte doit avoir une extension .txt"}, status_code=405)
     
+    txt = txt.decode('UTF-8')
+    print(txt)
     # possible de rajouter dataset id / data augmentation / test à set_img
     mg.set_img(image, txt)
     

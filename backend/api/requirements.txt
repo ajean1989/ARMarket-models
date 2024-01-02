@@ -5,3 +5,7 @@ sqlalchemy
 mariadb
 Pillow
 python-multipart
+
+# dev
+pytest
+httpx

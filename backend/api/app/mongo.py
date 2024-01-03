@@ -1,11 +1,15 @@
 from pymongo import MongoClient
 from PIL import Image
+import bson
+
 import io
 import logging
 import datetime
 import random
 import re
+import json
 import shutil
+import sys
 
 # import sys
 # import os
@@ -99,7 +103,7 @@ class Mongo :
         self.log.info(f"API : delete dataset, dataset_id : {id}")
        
 
-    def set_img(self,img : bytes, annotation : list, dataset_id : list, dataset_extraction : str, pretreatment : bool, data_augmentation: bool, test : bool):
+    def set_img(self,img : bytes, annotation : bytes, dataset_id : list, dataset_extraction : str, pretreatment : bool, data_augmentation: bool, test : bool):
         """ 
         post /dataset/frame
         Enregistre les images qui on eu une détection et les métadonnées :
@@ -136,10 +140,10 @@ class Mongo :
         # Créé automatiquement "_id"
 
         # "img" : "[bin] Image"
-        imgbyte = self.img_to_byte(img)
-        new_document["img"] = imgbyte[0]
+        #imgbyte = self.img_to_byte(img)
+        new_document["img"] = img
         # "size" : "[int] Taille de l'image en Mo"
-        new_document["size"] = imgbyte[1]
+        new_document["size"] = sys.getsizeof(img)
 
         # "name" : "[str] Nom de l'image format [from(dataset d'extraction)_rand(10).jpg]"
         new_document["name"] = f"{dataset_extraction}_{random.random()*(10**10)}"
@@ -156,6 +160,9 @@ class Mongo :
 
         # "training_data" : list de dict contenant label, label int, bb de chaque détection de l'image
         # input est un une list contenant un json pré formaté avant l'envoie à l'API pour correspondre au format attendu par yolo. 
+        annotation = annotation.decode("utf-8")
+        annotation = json.loads(annotation)
+        
         new_document["training_data"] = annotation
 
         

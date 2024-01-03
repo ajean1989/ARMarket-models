@@ -1,9 +1,12 @@
+import json
+
 from fastapi import FastAPI, HTTPException, UploadFile, File, Query, Form
 from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel
 from typing import List, Optional, Annotated
 from app import mongo
 from app import maria
+
 
 app = FastAPI()
 
@@ -42,14 +45,13 @@ class training_data(BaseModel):
     objets: List[Detection]
 
 @app.post("/dataset/frame/")
-def add_frame(image: UploadFile, txt: Annotated[bytes, File()]):
-    if not image.filename.lower().endswith((".png", ".jpg", ".jpeg")):
+def add_frame(image: list[UploadFile]):
+    if not image[0].filename.lower().endswith((".png", ".jpg", ".jpeg")):
         return JSONResponse(content={"error": "L'image doit avoir une extension .png, .jpg ou .jpeg"}, status_code=405)
-    
-    txt = txt.decode('UTF-8')
-    print(txt)
-    # possible de rajouter dataset id / data augmentation / test à set_img
-    mg.set_img(image, txt)
+   
+    metadata = eval(image[2].file.read().decode("utf-8"))
+
+    mg.set_img(image[0].file.read(), image[1].file.read(), dataset_id = metadata["dataset_id"], dataset_extraction = metadata["dataset_extraction"], pretreatment = metadata["pretreatment"], data_augmentation = metadata["data_augmentation"], test = metadata["test"])
     
     return JSONResponse(content={"message": "Frame ajoutée avec succès"}, status_code=200)
 

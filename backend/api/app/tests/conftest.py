@@ -1,4 +1,6 @@
 import pytest
+import io
+
 from PIL import Image
 
 @pytest.fixture(scope="module")
@@ -24,6 +26,14 @@ def binary_annotation():
     return annotation
 
 @pytest.fixture(scope="module")
-def img():
+def binary_img():
     img = Image.open("app/tests/sample/img_1.png")
-    return img
+    imgbyte = io.BytesIO()
+    img.save(imgbyte, format="png")
+    imgbyte = imgbyte.getvalue()
+    return imgbyte
+
+@pytest.fixture(scope="module")
+def binary_metadata():
+    metadata = b'{"dataset_id" : 0, "dataset_extraction" : "ARM", "pretreatment" : False, "data_augmentation" : False, "test" : True}'
+    return metadata

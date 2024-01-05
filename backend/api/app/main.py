@@ -45,15 +45,18 @@ class training_data(BaseModel):
     objets: List[Detection]
 
 @app.post("/dataset/frame/")
-def add_frame(image: list[UploadFile]):
-    if not image[0].filename.lower().endswith((".png", ".jpg", ".jpeg")):
+def add_frame(files: list[UploadFile] = File(...)):
+    if not files[0].filename.lower().endswith((".png", ".jpg", ".jpeg")):
         return JSONResponse(content={"error": "L'image doit avoir une extension .png, .jpg ou .jpeg"}, status_code=405)
+    if len(files) != 3:
+        return JSONResponse(content={"error": "array must have 3 binaries elements"}, status_code=405)
    
-    metadata = eval(image[2].file.read().decode("utf-8"))
+    metadata = eval(files[2].file.read().decode("utf-8"))
 
-    mg.set_img(image[0].file.read(), image[1].file.read(), dataset_id = metadata["dataset_id"], dataset_extraction = metadata["dataset_extraction"], pretreatment = metadata["pretreatment"], data_augmentation = metadata["data_augmentation"], test = metadata["test"])
+    mg.set_img(files[0].file.read(), files[1].file.read(), dataset_id = metadata["dataset_id"], dataset_extraction = metadata["dataset_extraction"], pretreatment = metadata["pretreatment"], data_augmentation = metadata["data_augmentation"], test = metadata["test"])
     
     return JSONResponse(content={"message": "Frame ajoutée avec succès"}, status_code=200)
+
 
 
 @app.put("/dataset/frame/{id}")

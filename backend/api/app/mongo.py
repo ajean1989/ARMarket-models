@@ -174,6 +174,22 @@ class Mongo :
             self.dataset_collection.insert_one(new_document)
             self.log.info(f"API : frame set in dataset collection - dataset_id : {dataset_id}")
 
+    def update_frame(self, id, query ,test):
+        "Met à jour une frame via son id"
+        if test :
+            self.dataset_test_collection.update_one(
+                {"_id" : id},
+                {"$set" : query}
+            )
+            self.log.info(f"API : frame {id} updated in dataset_test collection with {query}")
+        else : 
+            self.dataset_test_collection.update_one(
+                {"_id" : f"{id}"},
+                {"$set" : query}
+            )
+            self.log.info(f"API : frame {id} updated in dataset collection with {query}")
+
+        pass
 
     def delete_frame(self, id) : 
         """delete /dataset/{id}"""

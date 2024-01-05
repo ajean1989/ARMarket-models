@@ -12,3 +12,14 @@ def test_set_img(binary_annotation, binary_img):
     for doc in res :
         count += 1
     assert count == 1 
+
+
+
+def test_update_frame(binary_annotation, binary_metadata):
+    res = mongo.dataset_test_collection.find_one({})
+    assert res["data_augmentation"] == False
+    id = res["_id"] 
+    mongo.update_frame(id=id, query={"data_augmentation" : True}, test=True)
+    res_updated = mongo.dataset_test_collection.find_one({"_id": id})
+    assert res_updated["data_augmentation"] == True 
+

@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from typing import List, Optional, Annotated
 from app import mongo
 from app import maria
+from bson.objectid import ObjectId
 
 
 app = FastAPI()
@@ -36,13 +37,7 @@ def get_dataset(id: int):
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Fichier ZIP non trouvé")
 
-class Detection(BaseModel):
-    label: str
-    label_int: int
-    bounding_box: list
 
-class training_data(BaseModel):
-    objets: List[Detection]
 
 @app.post("/dataset/frame/")
 def add_frame(files: list[UploadFile] = File(...)):
@@ -59,16 +54,23 @@ def add_frame(files: list[UploadFile] = File(...)):
 
 
 
-@app.put("/dataset/frame/{id}")
-def add_frame(image: UploadFile = File(...), txt: UploadFile = File(...)):
-    if not image.filename.lower().endswith((".png", ".jpg", ".jpeg")):
-        return JSONResponse(content={"error": "L'image doit avoir une extension .png, .jpg ou .jpeg"}, status_code=405)
 
-    if not txt.filename.lower().endswith(".txt"):
-        return JSONResponse(content={"error": "Le fichier texte doit avoir une extension .txt"}, status_code=405)
-    
+class Update(BaseModel):
+    id : str
+    query: dict
+    test : bool
+
+@app.put("/dataset/frame/")
+def update_frame(update : Update):
+    update = update.model_dump()
+
+    for i in update["query"].keys() :
+        if i not in ["name", "pre_treatment", "data_augmentation", "dataset", "training_data"] :
+            return JSONResponse(content={"error": f"Le champ {i} ne peut pas être modifié."}, status_code=405)
+
+
     # possible de rajouter dataset id / data augmentation / test à set_img
-    mg.set_img(image, txt)
+    mg.update_frame(update["id"], update["query"] ,update["test"])
     
     return JSONResponse(content={"message": "Frame ajoutée avec succès"}, status_code=200)
     

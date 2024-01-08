@@ -5,7 +5,7 @@
     "img" : "[bin] Image",
     "name" : "[str] Nom de l'image format [from(dataset d'extraction)_rand(10).jpg]",
     "size" : "[int] Taille de l'image en Mo",
-    "pre-treatment" : "[bool] Si l'image a été pré-traitée",
+    "pre_treatment" : "[bool] Si l'image a été pré-traitée",
     "data_augmentation" : "[bool] Si l'image est issue d'une data augmentation",
     "dataset" : "[list] Liste des datasets auquel l'image appartient",
     "training_data" :

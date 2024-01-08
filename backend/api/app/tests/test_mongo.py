@@ -1,4 +1,5 @@
 from app.mongo import Mongo
+from bson.objectid import ObjectId
 
 mongo = Mongo()
 
@@ -18,8 +19,8 @@ def test_set_img(binary_annotation, binary_img):
 def test_update_frame(binary_annotation, binary_metadata):
     res = mongo.dataset_test_collection.find_one({})
     assert res["data_augmentation"] == False
-    id = res["_id"] 
+    id = str(res["_id"])
     mongo.update_frame(id=id, query={"data_augmentation" : True}, test=True)
-    res_updated = mongo.dataset_test_collection.find_one({"_id": id})
+    res_updated = mongo.dataset_test_collection.find_one({"_id": ObjectId(id)})
     assert res_updated["data_augmentation"] == True 
 

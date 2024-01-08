@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 from PIL import Image
 import bson
 
@@ -35,7 +36,7 @@ class Mongo :
         self.db = self.client.ARMarket
         self.dataset_collection = self.db.dataset
         self.dataset_test_collection = self.db.dataset_test
-        self.pretreatment = 1
+
 
     def img_to_byte(self, img):
         """ Convertion d'une image PIL en BYTES """
@@ -174,22 +175,34 @@ class Mongo :
             self.dataset_collection.insert_one(new_document)
             self.log.info(f"API : frame set in dataset collection - dataset_id : {dataset_id}")
 
-    def update_frame(self, id, query ,test):
-        "Met à jour une frame via son id"
+    def update_frame(self, id : str, query : dict, test: bool):
+        """
+        Met à jour une frame via son id.
+        query = "key premier niveau" : value
+        "key premier niveau = date, img, name, size, pre-trement, data_aumentation, dataset, training_data.
+        """
+
         if test :
             self.dataset_test_collection.update_one(
-                {"_id" : id},
+                {"_id" : ObjectId(id)},
                 {"$set" : query}
+            )
+            self.dataset_test_collection.update_one(
+                {"_id" :  ObjectId(id)},
+                {"$set" : {"update_date" : datetime.datetime.today().strftime('%Y-%m-%d')}}
             )
             self.log.info(f"API : frame {id} updated in dataset_test collection with {query}")
         else : 
             self.dataset_test_collection.update_one(
-                {"_id" : f"{id}"},
+                {"_id" :  ObjectId(id)},
                 {"$set" : query}
             )
+            self.dataset_test_collection.update_one(
+                {"_id" :  ObjectId(id)},
+                {"$set" : {"update_date" : datetime.datetime.today().strftime('%Y-%m-%d')}}
+                )
             self.log.info(f"API : frame {id} updated in dataset collection with {query}")
 
-        pass
 
     def delete_frame(self, id) : 
         """delete /dataset/{id}"""
